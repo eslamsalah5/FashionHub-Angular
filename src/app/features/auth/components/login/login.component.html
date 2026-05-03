@@ -1,0 +1,76 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-card__header">
+      <h1 class="auth-card__title">Welcome back</h1>
+      <p class="auth-card__subtitle">Sign in to your FashionHub account</p>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert--error" role="alert" aria-live="assertive">
+        {{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="identifier">Email or Username</label>
+        <input
+          id="identifier"
+          type="text"
+          class="form-control"
+          [class.is-invalid]="identifierCtrl.invalid && identifierCtrl.touched"
+          formControlName="emailOrUsername"
+          autocomplete="username"
+          aria-required="true"
+          [attr.aria-describedby]="identifierCtrl.invalid && identifierCtrl.touched ? 'identifier-error' : null"
+        />
+        @if (identifierCtrl.invalid && identifierCtrl.touched) {
+          <span id="identifier-error" class="form-error" role="alert">
+            Email or username is required.
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          [class.is-invalid]="passwordCtrl.invalid && passwordCtrl.touched"
+          formControlName="password"
+          autocomplete="current-password"
+          aria-required="true"
+          [attr.aria-describedby]="passwordCtrl.invalid && passwordCtrl.touched ? 'password-error' : null"
+        />
+        @if (passwordCtrl.invalid && passwordCtrl.touched) {
+          <span id="password-error" class="form-error" role="alert">
+            @if (passwordCtrl.errors?.['required']) { Password is required. }
+            @else if (passwordCtrl.errors?.['minlength']) { Password must be at least 6 characters. }
+          </span>
+        }
+      </div>
+
+      <div class="auth-card__options">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="rememberMe" />
+          Remember me
+        </label>
+        <a routerLink="/auth/forgot-password" class="auth-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-card__submit" [disabled]="loading()">
+        @if (loading()) {
+          <app-loading-spinner size="sm" label="Signing in..." />
+        } @else {
+          Sign In
+        }
+      </button>
+    </form>
+
+    <p class="auth-card__footer">
+      Don't have an account?
+      <a routerLink="/auth/register" class="auth-link">Create one</a>
+    </p>
+  </div>
+</div>

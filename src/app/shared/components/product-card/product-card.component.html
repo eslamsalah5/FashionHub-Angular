@@ -1,0 +1,58 @@
+<article
+  class="product-card"
+  [attr.aria-label]="product().name"
+  (click)="onViewDetail()"
+  (keydown.enter)="onViewDetail()"
+  tabindex="0"
+  role="button"
+>
+  <div class="product-card__image-wrapper">
+    @if (product().isOnSale) {
+      <span class="product-card__badge" aria-label="On sale">Sale</span>
+    }
+    <img
+      #img
+      [src]="product().mainImageUrl || 'https://placehold.co/300x300/e2e8f0/64748b?text=No+Image'"
+      (error)="img.src = 'https://placehold.co/300x300/e2e8f0/64748b?text=No+Image'"
+      [alt]="product().name"
+      width="300"
+      height="300"
+      class="product-card__image"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="product-card__body">
+    <p class="product-card__brand">{{ product().brand }}</p>
+    <h3 class="product-card__name">{{ product().name }}</h3>
+
+    <div class="product-card__price">
+      @if (product().isOnSale && product().discountPrice) {
+        <span class="product-card__price--original" aria-label="Original price">
+          {{ product().price | currency }}
+        </span>
+        <span class="product-card__price--sale" aria-label="Sale price">
+          {{ product().discountPrice | currency }}
+        </span>
+      } @else {
+        <span class="product-card__price--regular">{{ product().price | currency }}</span>
+      }
+    </div>
+
+    @if (product().stockQuantity === 0) {
+      <p class="product-card__out-of-stock" role="status">Out of Stock</p>
+    }
+
+    @if (showAddToCart()) {
+      <button
+        class="btn btn-primary product-card__cta"
+        [disabled]="product().stockQuantity === 0"
+        [attr.aria-disabled]="product().stockQuantity === 0"
+        (click)="onAddToCart($event)"
+        aria-label="Add {{ product().name }} to cart"
+      >
+        Add to Cart
+      </button>
+    }
+  </div>
+</article>

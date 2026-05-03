@@ -1,0 +1,9 @@
+<div
+  class="spinner-wrapper"
+  [class]="'spinner-wrapper--' + size()"
+  role="status"
+  [attr.aria-label]="label()"
+>
+  <div class="spinner" [class]="'spinner--' + size()"></div>
+  <span class="sr-only">{{ label() }}</span>
+</div>

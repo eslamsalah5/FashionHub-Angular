@@ -1,0 +1,244 @@
+<main class="admin-page">
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isEdit() ? 'Edit Product' : 'Add Product' }}</h1>
+    <a routerLink="/admin/products" class="btn btn-secondary">← Back to Products</a>
+  </div>
+
+  @if (loadingData()) {
+    <app-loading-spinner size="lg" label="Loading product data..." />
+  } @else {
+
+    @if (errors().length > 0) {
+      <div class="alert alert--error" role="alert" aria-live="assertive">
+        @for (err of errors(); track err) { <p>{{ err }}</p> }
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="product-form">
+
+      <!-- ── Basic info ── -->
+      <section class="form-section">
+        <h2 class="form-section__title">Basic Information</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pf-name">Product Name *</label>
+            <input id="pf-name" type="text" class="form-control"
+              [class.is-invalid]="f.name.invalid && f.name.touched"
+              formControlName="name" aria-required="true"
+              [attr.aria-describedby]="f.name.invalid && f.name.touched ? 'pf-name-err' : null" />
+            @if (f.name.invalid && f.name.touched) {
+              <span id="pf-name-err" class="form-error" role="alert">Name is required.</span>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-brand">Brand *</label>
+            <input id="pf-brand" type="text" class="form-control"
+              [class.is-invalid]="f.brand.invalid && f.brand.touched"
+              formControlName="brand" aria-required="true"
+              [attr.aria-describedby]="f.brand.invalid && f.brand.touched ? 'pf-brand-err' : null" />
+            @if (f.brand.invalid && f.brand.touched) {
+              <span id="pf-brand-err" class="form-error" role="alert">Brand is required.</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pf-desc">Description *</label>
+          <textarea id="pf-desc" class="form-control"
+            [class.is-invalid]="f.description.invalid && f.description.touched"
+            formControlName="description" rows="4" aria-required="true"></textarea>
+          @if (f.description.invalid && f.description.touched) {
+            <span class="form-error" role="alert">Description is required.</span>
+          }
+        </div>
+      </section>
+
+      <!-- ── Pricing & Stock ── -->
+      <section class="form-section">
+        <h2 class="form-section__title">Pricing & Stock</h2>
+        <div class="form-row form-row--3">
+          <div class="form-group">
+            <label class="form-label" for="pf-price">Price ($) *</label>
+            <input id="pf-price" type="number" class="form-control"
+              [class.is-invalid]="f.price.invalid && f.price.touched"
+              formControlName="price" min="0.01" step="0.01" aria-required="true" />
+            @if (f.price.invalid && f.price.touched) {
+              <span class="form-error" role="alert">Valid price is required.</span>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-discount">Discount Price ($)</label>
+            <input id="pf-discount" type="number" class="form-control"
+              formControlName="discountPrice" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-stock">Stock Quantity *</label>
+            <input id="pf-stock" type="number" class="form-control"
+              [class.is-invalid]="f.stockQuantity.invalid && f.stockQuantity.touched"
+              formControlName="stockQuantity" min="0" aria-required="true" />
+            @if (f.stockQuantity.invalid && f.stockQuantity.touched) {
+              <span class="form-error" role="alert">Stock quantity is required.</span>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Classification ── -->
+      <section class="form-section">
+        <h2 class="form-section__title">Classification</h2>
+        <div class="form-row form-row--3">
+          <div class="form-group">
+            <label class="form-label" for="pf-category">Category *</label>
+            <select id="pf-category" class="form-control" formControlName="category" aria-required="true">
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-gender">Gender *</label>
+            <select id="pf-gender" class="form-control" formControlName="gender" aria-required="true">
+              @for (g of genders; track g) {
+                <option [value]="g">{{ g }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-tags">Tags</label>
+            <input id="pf-tags" type="text" class="form-control"
+              formControlName="tags" placeholder="summer, casual, new" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pf-sizes">Available Sizes</label>
+            <input id="pf-sizes" type="text" class="form-control"
+              formControlName="availableSizes" placeholder="S, M, L, XL, XXL" />
+            <div class="presets-group" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; color: var(--color-text-muted); align-self: center;">Quick:</span>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setSizesPreset('XS,S,M,L,XL,XXL')">Clothes</button>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setSizesPreset('28,30,32,34,36,38')">Pants</button>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setSizesPreset('37,38,39,40,41,42,43,44,45')">Shoes</button>
+            </div>
+            <p class="form-hint" style="margin-top: 4px;">Or type comma-separated values manually</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pf-colors">Available Colors</label>
+            <input id="pf-colors" type="text" class="form-control"
+              formControlName="availableColors" placeholder="Red, Blue, Black" />
+            <div class="presets-group" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; color: var(--color-text-muted); align-self: center;">Quick:</span>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setColorsPreset('Black,White,Grey')">Basic</button>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setColorsPreset('Red,Blue,Green,Yellow')">Colors</button>
+              <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 12px; height: auto;" (click)="setColorsPreset('Gold,Silver,Rose Gold')">Jewelry</button>
+            </div>
+            <p class="form-hint" style="margin-top: 4px;">Or type comma-separated values manually</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Images ── -->
+      <section class="form-section">
+        <h2 class="form-section__title">
+          Product Images
+          @if (!isEdit()) { <span class="required-note">* Main image required</span> }
+        </h2>
+
+        <!-- Main image -->
+        <div class="form-group">
+          <label class="form-label" for="pf-main-image">
+            Main Image {{ !isEdit() ? '*' : '(leave empty to keep current)' }}
+          </label>
+
+          @if (mainImagePreview()) {
+            <div class="image-preview">
+              <img #img [src]="mainImagePreview()" (error)="img.src = 'https://placehold.co/300x300/e2e8f0/64748b?text=No+Image'" alt="Main product image preview" class="image-preview__img" />
+              <button type="button" class="image-preview__remove btn btn-danger"
+                (click)="removeMainImage()" aria-label="Remove main image">
+                ✕ Remove
+              </button>
+            </div>
+          }
+
+          <label class="file-upload-label" for="pf-main-image">
+            <span class="file-upload-icon" aria-hidden="true">📷</span>
+            <span>{{ mainImageFile() ? mainImageFile()!.name : 'Choose main image' }}</span>
+            <input
+              id="pf-main-image"
+              type="file"
+              class="file-upload-input"
+              accept="image/*"
+              (change)="onMainImageChange($event)"
+              [attr.aria-required]="!isEdit()"
+            />
+          </label>
+        </div>
+
+        <!-- Additional images -->
+        <div class="form-group">
+          <label class="form-label" for="pf-additional-images">
+            Additional Images (optional)
+          </label>
+          <label class="file-upload-label" for="pf-additional-images">
+            <span class="file-upload-icon" aria-hidden="true">🖼️</span>
+            <span>
+              @if (additionalFiles().length > 0) {
+                {{ additionalFiles().length }} file(s) selected
+              } @else {
+                Choose additional images
+              }
+            </span>
+            <input
+              id="pf-additional-images"
+              type="file"
+              class="file-upload-input"
+              accept="image/*"
+              multiple
+              (change)="onAdditionalImagesChange($event)"
+            />
+          </label>
+          @if (additionalFiles().length > 0) {
+            <ul class="file-list" aria-label="Selected additional images">
+              @for (file of additionalFiles(); track file.name) {
+                <li class="file-list__item">{{ file.name }}</li>
+              }
+            </ul>
+          }
+        </div>
+      </section>
+
+      <!-- ── Flags ── -->
+      <section class="form-section">
+        <h2 class="form-section__title">Settings</h2>
+        <div class="flags-row">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isOnSale" />
+            <span>On Sale</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isFeatured" />
+            <span>Featured</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Active (visible to customers)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- ── Actions ── -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary form-actions__submit" [disabled]="saving()">
+          @if (saving()) {
+            <app-loading-spinner size="sm" label="Saving..." />
+          } @else {
+            {{ isEdit() ? 'Update Product' : 'Create Product' }}
+          }
+        </button>
+        <a routerLink="/admin/products" class="btn btn-secondary">Cancel</a>
+      </div>
+
+    </form>
+  }
+</main>

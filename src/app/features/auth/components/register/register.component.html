@@ -1,0 +1,146 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-card__header">
+      <h1 class="auth-card__title">Create account</h1>
+      <p class="auth-card__subtitle">Join FashionHub today</p>
+    </div>
+
+    @if (success()) {
+      <div class="alert alert--success" role="status" aria-live="polite">
+        Account created successfully! Redirecting to login...
+      </div>
+    }
+
+    @if (errors().length > 0) {
+      <div class="alert alert--error" role="alert" aria-live="assertive">
+        @for (err of errors(); track err) { <p>{{ err }}</p> }
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Profile picture -->
+      <div class="form-group">
+        <label class="form-label" id="profile-pic-label">
+          Profile Picture <span class="optional-tag">(optional)</span>
+        </label>
+
+        <div class="profile-upload" aria-labelledby="profile-pic-label">
+          @if (profilePreview()) {
+            <div class="profile-upload__preview">
+              <img [src]="profilePreview()" alt="Profile picture preview" class="profile-upload__img" />
+              <button
+                type="button"
+                class="profile-upload__remove"
+                (click)="removeProfilePicture()"
+                aria-label="Remove profile picture"
+              >✕</button>
+            </div>
+          } @else {
+            <div class="profile-upload__placeholder" aria-hidden="true">👤</div>
+          }
+
+          <label class="file-upload-label" for="profilePicture">
+            <span>{{ profileFile() ? profileFile()!.name : 'Choose photo' }}</span>
+            <input
+              id="profilePicture"
+              type="file"
+              class="file-upload-input"
+              accept="image/*"
+              (change)="onProfilePictureChange($event)"
+              aria-label="Upload profile picture"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- Full name -->
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full name *</label>
+        <input id="fullName" type="text" class="form-control"
+          [class.is-invalid]="f.fullName.invalid && f.fullName.touched"
+          formControlName="fullName" autocomplete="name" aria-required="true"
+          [attr.aria-describedby]="f.fullName.invalid && f.fullName.touched ? 'fullName-error' : null" />
+        @if (f.fullName.invalid && f.fullName.touched) {
+          <span id="fullName-error" class="form-error" role="alert">Full name is required.</span>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label" for="reg-email">Email address *</label>
+        <input id="reg-email" type="email" class="form-control"
+          [class.is-invalid]="f.email.invalid && f.email.touched"
+          formControlName="email" autocomplete="email" aria-required="true"
+          [attr.aria-describedby]="f.email.invalid && f.email.touched ? 'reg-email-error' : null" />
+        @if (f.email.invalid && f.email.touched) {
+          <span id="reg-email-error" class="form-error" role="alert">
+            @if (f.email.errors?.['required']) { Email is required. }
+            @else { Please enter a valid email. }
+          </span>
+        }
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label class="form-label" for="phoneNumber">Phone number *</label>
+        <input id="phoneNumber" type="tel" class="form-control"
+          [class.is-invalid]="f.phoneNumber.invalid && f.phoneNumber.touched"
+          formControlName="phoneNumber" autocomplete="tel" aria-required="true"
+          [attr.aria-describedby]="f.phoneNumber.invalid && f.phoneNumber.touched ? 'phone-error' : null" />
+        @if (f.phoneNumber.invalid && f.phoneNumber.touched) {
+          <span id="phone-error" class="form-error" role="alert">Phone number is required.</span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label" for="reg-password">Password *</label>
+        <input id="reg-password" type="password" class="form-control"
+          [class.is-invalid]="f.password.invalid && f.password.touched"
+          formControlName="password" autocomplete="new-password" aria-required="true"
+          [attr.aria-describedby]="f.password.invalid && f.password.touched ? 'reg-password-error' : null" />
+        @if (f.password.invalid && f.password.touched) {
+          <span id="reg-password-error" class="form-error" role="alert">
+            @if (f.password.errors?.['required']) { Password is required. }
+            @else { Password must be at least 6 characters. }
+          </span>
+        }
+      </div>
+
+      <!-- Confirm password -->
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm password *</label>
+        <input id="confirmPassword" type="password" class="form-control"
+          [class.is-invalid]="f.confirmPassword.invalid && f.confirmPassword.touched"
+          formControlName="confirmPassword" autocomplete="new-password" aria-required="true"
+          [attr.aria-describedby]="f.confirmPassword.invalid && f.confirmPassword.touched ? 'confirm-error' : null" />
+        @if (f.confirmPassword.invalid && f.confirmPassword.touched) {
+          <span id="confirm-error" class="form-error" role="alert">Please confirm your password.</span>
+        }
+      </div>
+
+      <!-- Address -->
+      <div class="form-group">
+        <label class="form-label" for="address">
+          Address <span class="optional-tag">(optional)</span>
+        </label>
+        <input id="address" type="text" class="form-control"
+          formControlName="address" autocomplete="street-address" />
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-card__submit" [disabled]="loading()">
+        @if (loading()) {
+          <app-loading-spinner size="sm" label="Creating account..." />
+        } @else {
+          Create Account
+        }
+      </button>
+    </form>
+
+    <p class="auth-card__footer">
+      Already have an account?
+      <a routerLink="/auth/login" class="auth-link">Sign in</a>
+    </p>
+  </div>
+</div>

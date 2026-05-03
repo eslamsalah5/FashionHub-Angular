@@ -1,0 +1,25 @@
+<main class="product-list-page">
+  <header class="product-list-page__header">
+    <h1 class="product-list-page__title">{{ category() }}</h1>
+  </header>
+
+  @if (loading()) {
+    <div class="product-grid" aria-busy="true">
+      <div class="skeleton" style="height: 380px"></div>
+      <div class="skeleton" style="height: 380px"></div>
+      <div class="skeleton" style="height: 380px"></div>
+      <div class="skeleton" style="height: 380px"></div>
+    </div>
+  } @else if (result().items.length === 0) {
+    <app-empty-state title="No products in this category" icon="👗" actionLabel="Browse All" actionRoute="/products" />
+  } @else {
+    <div class="product-grid" role="list" aria-label="Products">
+      @for (product of result().items; track product.id) {
+        <div role="listitem">
+          <app-product-card [product]="product" [showAddToCart]="showCart" (viewDetail)="onViewDetail($event)" />
+        </div>
+      }
+    </div>
+    <app-pagination [currentPage]="result().pageIndex" [totalCount]="result().totalCount" [pageSize]="pageSize" (pageChange)="loadPage($event)" />
+  }
+</main>

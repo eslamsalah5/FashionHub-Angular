@@ -1,1 +1,334 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   FashionHub — Global Styles & CSS Custom Properties
+   All colours are defined here as CSS variables.
+   To retheme the app, only edit the values in :root.
+   ============================================================ */
+
+:root {
+  /* ── Primary green palette ── */
+  --color-primary-50:  #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;   /* main brand green */
+  --color-primary-600: #16a34a;   /* hover / active */
+  --color-primary-700: #15803d;   /* pressed */
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+
+  /* ── Teal accent (analogous to green) ── */
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #14b8a6;
+  --color-accent-600: #0d9488;
+
+  /* ── Neutral greys ── */
+  --color-neutral-50:  #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+
+  /* ── Semantic colours ── */
+  --color-success:      var(--color-primary-500);
+  --color-success-bg:   var(--color-primary-50);
+  --color-warning:      #f59e0b;
+  --color-warning-bg:   #fffbeb;
+  --color-error:        #ef4444;
+  --color-error-bg:     #fef2f2;
+  --color-info:         #3b82f6;
+  --color-info-bg:      #eff6ff;
+
+  /* ── Order status colours ── */
+  --color-status-pending:    #f59e0b;
+  --color-status-processing: var(--color-info);
+  --color-status-shipped:    var(--color-accent-500);
+  --color-status-delivered:  var(--color-primary-500);
+  --color-status-cancelled:  var(--color-error);
+  --color-status-returned:   var(--color-neutral-500);
+
+  /* ── Surface / background ── */
+  --color-bg:           #ffffff;
+  --color-bg-subtle:    var(--color-neutral-50);
+  --color-bg-muted:     var(--color-neutral-100);
+  --color-surface:      #ffffff;
+  --color-surface-raised: #ffffff;
+
+  /* ── Text ── */
+  --color-text:         var(--color-neutral-900);
+  --color-text-muted:   var(--color-neutral-500);
+  --color-text-subtle:  var(--color-neutral-400);
+  --color-text-inverse: #ffffff;
+  --color-text-primary: var(--color-primary-700);
+
+  /* ── Border ── */
+  --color-border:       var(--color-neutral-200);
+  --color-border-focus: var(--color-primary-500);
+
+  /* ── Button ── */
+  --btn-primary-bg:     var(--color-primary-500);
+  --btn-primary-hover:  var(--color-primary-600);
+  --btn-primary-active: var(--color-primary-700);
+  --btn-primary-text:   #ffffff;
+
+  --btn-secondary-bg:   var(--color-neutral-100);
+  --btn-secondary-hover: var(--color-neutral-200);
+  --btn-secondary-text: var(--color-neutral-800);
+
+  --btn-danger-bg:      var(--color-error);
+  --btn-danger-hover:   #dc2626;
+  --btn-danger-text:    #ffffff;
+
+  /* ── Spacing scale ── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ── Border radius ── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* ── Typography ── */
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs:   0.75rem;
+  --font-size-sm:   0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg:   1.125rem;
+  --font-size-xl:   1.25rem;
+  --font-size-2xl:  1.5rem;
+  --font-size-3xl:  1.875rem;
+  --font-size-4xl:  2.25rem;
+
+  /* ── Transitions ── */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   350ms ease;
+
+  /* ── Z-index layers ── */
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+}
+
+/* ── Base reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Focus visible ── */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ── Utility classes ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* ── Button base ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--btn-primary-active);
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--btn-secondary-hover);
+}
+
+.btn-danger {
+  background-color: var(--btn-danger-bg);
+  color: var(--btn-danger-text);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--btn-danger-hover);
+}
+
+/* ── Form base ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-neutral-700);
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgb(34 197 94 / 0.15);
+}
+
+.form-control.is-invalid {
+  border-color: var(--color-error);
+}
+
+.form-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+/* ── Card base ── */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.badge-success {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+.badge-warning {
+  background-color: var(--color-warning-bg);
+  color: #92400e;
+}
+
+.badge-error {
+  background-color: var(--color-error-bg);
+  color: #991b1b;
+}
+
+.badge-info {
+  background-color: var(--color-info-bg);
+  color: #1e40af;
+}
+
+.badge-neutral {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+}
+
+/* ── Skeleton Loader ── */
+.skeleton {
+  background: linear-gradient(
+    90deg, 
+    rgba(209, 213, 219, 0.2) 25%, 
+    rgba(209, 213, 219, 0.5) 50%, 
+    rgba(209, 213, 219, 0.2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

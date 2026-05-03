@@ -1,0 +1,60 @@
+<main class="cart-page">
+  <h1 class="cart-page__title">Your Cart</h1>
+
+  @if (loading()) {
+    <div class="cart-layout" aria-busy="true">
+      <section class="cart-items">
+        <div class="cart-item skeleton" style="height: 114px"></div>
+        <div class="cart-item skeleton" style="height: 114px"></div>
+      </section>
+      <aside class="cart-summary skeleton" style="height: 250px"></aside>
+    </div>
+  } @else if (error()) {
+    <p class="cart-page__error" role="alert">{{ error() }}</p>
+  } @else if (!cart() || cart()!.items.length === 0) {
+    <app-empty-state
+      title="Your cart is empty"
+      message="Add some items to get started."
+      icon="🛒"
+      actionLabel="Browse Products"
+      actionRoute="/products"
+    />
+  } @else {
+    <div class="cart-layout">
+      <section class="cart-items" aria-label="Cart items">
+        @for (item of cart()!.items; track item.id) {
+          <article class="cart-item">
+            <img #img [src]="item.productImageUrl || 'https://placehold.co/80x80/e2e8f0/64748b?text=No+Image'" (error)="img.src = 'https://placehold.co/80x80/e2e8f0/64748b?text=No+Image'" [alt]="item.productName" class="cart-item__image" width="80" height="80" />
+            <div class="cart-item__info">
+              <h2 class="cart-item__name">{{ item.productName }}</h2>
+              @if (item.selectedSize) { <p class="cart-item__meta">Size: {{ item.selectedSize }}</p> }
+              @if (item.selectedColor) { <p class="cart-item__meta">Color: {{ item.selectedColor }}</p> }
+              <p class="cart-item__price">{{ item.unitPrice | currency }}</p>
+            </div>
+            <div class="cart-item__qty" role="group" [attr.aria-label]="'Quantity for ' + item.productName">
+              <button class="qty-btn" (click)="decrease(item)" [attr.aria-label]="'Decrease quantity of ' + item.productName">−</button>
+              <span class="qty-value" aria-live="polite">{{ item.quantity }}</span>
+              <button class="qty-btn" (click)="increase(item)" [attr.aria-label]="'Increase quantity of ' + item.productName">+</button>
+            </div>
+            <p class="cart-item__total">{{ item.totalPrice | currency }}</p>
+            <button class="cart-item__remove btn btn-secondary" (click)="remove(item)" [attr.aria-label]="'Remove ' + item.productName + ' from cart'">✕</button>
+          </article>
+        }
+      </section>
+
+      <aside class="cart-summary">
+        <h2 class="cart-summary__title">Order Summary</h2>
+        <div class="cart-summary__row">
+          <span>Items ({{ cart()!.totalItems }})</span>
+          <span>{{ cart()!.totalPrice | currency }}</span>
+        </div>
+        <div class="cart-summary__total">
+          <span>Total</span>
+          <span>{{ cart()!.totalPrice | currency }}</span>
+        </div>
+        <a routerLink="/checkout" class="btn btn-primary cart-summary__checkout">Proceed to Checkout</a>
+        <button class="btn btn-secondary cart-summary__clear" (click)="clearCart()">Clear Cart</button>
+      </aside>
+    </div>
+  }
+</main>

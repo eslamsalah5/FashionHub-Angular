@@ -1,0 +1,153 @@
+.checkout-page {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.checkout-page__title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.checkout-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.checkout-section__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.gateway-list, .method-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.gateway-btn, .method-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.gateway-btn__icon {
+  font-size: var(--font-size-lg);
+  line-height: 1;
+}
+
+.gateway-btn:hover, .method-btn:hover {
+  border-color: var(--color-primary-400);
+  background-color: var(--color-primary-50);
+}
+
+.gateway-btn--selected, .method-btn--selected {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-weight: 600;
+}
+
+/* ── Stripe Card Element ────────────────────────────────────── */
+.stripe-section {
+  gap: var(--space-3);
+}
+
+.stripe-card-element {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  min-height: 44px;
+  background-color: var(--color-surface);
+  transition: border-color var(--transition-fast);
+  cursor: text;
+}
+
+.stripe-card-element:focus-within {
+  border-color: var(--color-primary-500);
+  outline: none;
+}
+
+.stripe-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted, #718096);
+  margin: 0;
+}
+
+.stripe-secure-note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted, #718096);
+  margin: 0;
+}
+
+.stripe-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error, #e53e3e);
+  margin: 0;
+  font-weight: 500;
+}
+
+.stripe-notice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.stripe-notice--warn {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+/* ── Confirm Button ─────────────────────────────────────────── */
+.checkout-page__confirm {
+  padding: var(--space-4);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+/* ── Alerts ─────────────────────────────────────────────────── */
+.alert {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.alert__icon {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.alert--error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.alert--success {
+  background-color: #f0fff4;
+  color: #276749;
+  border: 1px solid #68d391;
+  font-weight: 600;
+}

@@ -1,0 +1,57 @@
+@if (loading()) {
+  <div class="order-detail" aria-busy="true" style="margin-top: 4rem;">
+    <div class="skeleton" style="height: 24px; width: 40%; margin-bottom: var(--space-6);"></div>
+    <div class="skeleton" style="height: 100px; width: 100%; margin-bottom: var(--space-8);"></div>
+    <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: var(--space-4);"></div>
+    <div class="skeleton" style="height: 60px; width: 100%;"></div>
+  </div>
+} @else if (error()) {
+  <div class="order-detail-error" role="alert">
+    <p>{{ error() }}</p>
+    <a routerLink="/orders" class="btn btn-secondary">Back to Orders</a>
+  </div>
+} @else if (order(); as o) {
+  <main class="order-detail">
+    <nav class="order-detail__breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/orders" class="breadcrumb-link">My Orders</a>
+      <span aria-hidden="true"> / </span>
+      <span>Order #{{ o.id }}</span>
+    </nav>
+
+    <div class="order-detail__header">
+      <div>
+        <h1 class="order-detail__title">Order #{{ o.id }}</h1>
+        <p class="order-detail__date">Placed on {{ o.orderDate | date:'longDate' }}</p>
+      </div>
+      <span class="badge" [class]="statusClass(o.status)" [attr.aria-label]="'Status: ' + statusLabel(o.status)">
+        {{ statusLabel(o.status) }}
+      </span>
+    </div>
+
+    <section class="order-detail__items" aria-label="Order items">
+      <h2 class="section-title">Items</h2>
+      @for (item of o.orderItems; track item.productId) {
+        <div class="order-item">
+          <div class="order-item__info">
+            <p class="order-item__name">{{ item.productName }}</p>
+            <p class="order-item__meta">SKU: {{ item.productSKU }} · Size: {{ item.selectedSize }} · Color: {{ item.selectedColor }}</p>
+          </div>
+          <p class="order-item__qty">× {{ item.quantity }}</p>
+          <p class="order-item__price">{{ item.subtotal | currency }}</p>
+        </div>
+      }
+    </section>
+
+    <div class="order-detail__total">
+      <span>Total</span>
+      <span>{{ o.totalAmount | currency }}</span>
+    </div>
+
+    @if (o.orderNotes) {
+      <section class="order-detail__notes">
+        <h2 class="section-title">Notes</h2>
+        <p>{{ o.orderNotes }}</p>
+      </section>
+    }
+  </main>
+}

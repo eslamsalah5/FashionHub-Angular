@@ -1,0 +1,34 @@
+<main class="orders-page">
+  <h1 class="orders-page__title">My Orders</h1>
+
+  @if (loading()) {
+    <div class="orders-list" aria-busy="true">
+      <div class="skeleton" style="height: 156px"></div>
+      <div class="skeleton" style="height: 156px"></div>
+      <div class="skeleton" style="height: 156px"></div>
+    </div>
+  } @else if (orders().length === 0) {
+    <app-empty-state title="No orders yet" message="Your order history will appear here." icon="📦" actionLabel="Start Shopping" actionRoute="/products" />
+  } @else {
+    <div class="orders-list" role="list" aria-label="Order history">
+      @for (order of orders(); track order.id) {
+        <article class="order-card" role="listitem">
+          <div class="order-card__header">
+            <div>
+              <p class="order-card__id">Order #{{ order.id }}</p>
+              <p class="order-card__date">{{ order.orderDate | date:'mediumDate' }}</p>
+            </div>
+            <span class="badge" [class]="statusClass(order.status)" [attr.aria-label]="'Status: ' + statusLabel(order.status)">
+              {{ statusLabel(order.status) }}
+            </span>
+          </div>
+          <div class="order-card__body">
+            <p class="order-card__items">{{ order.orderItems.length }} item(s)</p>
+            <p class="order-card__total">{{ order.totalAmount | currency }}</p>
+          </div>
+          <a [routerLink]="['/orders', order.id]" class="btn btn-secondary order-card__view">View Details</a>
+        </article>
+      }
+    </div>
+  }
+</main>

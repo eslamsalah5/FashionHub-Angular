@@ -1,0 +1,124 @@
+@if (loading()) {
+  <div class="product-detail__layout" aria-busy="true" style="margin-top: 4rem;">
+    <div class="skeleton" style="height: 600px; border-radius: var(--radius-xl);"></div>
+    <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+      <div class="skeleton" style="height: 24px; width: 30%;"></div>
+      <div class="skeleton" style="height: 48px; width: 80%;"></div>
+      <div class="skeleton" style="height: 32px; width: 40%;"></div>
+      <div class="skeleton" style="height: 100px; width: 100%; margin-top: var(--space-4);"></div>
+      <div class="skeleton" style="height: 48px; width: 100%; margin-top: auto;"></div>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="product-detail-error" role="alert">
+    <p>{{ error() }}</p>
+    <a routerLink="/products" class="btn btn-secondary">Back to Products</a>
+  </div>
+} @else if (product(); as p) {
+  <main class="product-detail">
+    <nav class="product-detail__breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/products" class="breadcrumb-link">Products</a>
+      <span aria-hidden="true"> / </span>
+      <span>{{ p.name }}</span>
+    </nav>
+
+    <div class="product-detail__layout">
+      <div class="product-detail__gallery">
+        <img
+          #img
+          [src]="p.mainImageUrl || 'https://placehold.co/600x600/e2e8f0/64748b?text=No+Image'"
+          (error)="img.src = 'https://placehold.co/600x600/e2e8f0/64748b?text=No+Image'"
+          [alt]="p.name"
+          width="600"
+          height="600"
+          class="product-detail__main-image"
+        />
+      </div>
+
+      <div class="product-detail__info">
+        <p class="product-detail__brand">{{ p.brand }}</p>
+        <h1 class="product-detail__name">{{ p.name }}</h1>
+
+        <div class="product-detail__price">
+          @if (p.isOnSale && p.discountPrice) {
+            <span class="price--original" aria-label="Original price">{{ p.price | currency }}</span>
+            <span class="price--sale" aria-label="Sale price">{{ p.discountPrice | currency }}</span>
+            <span class="badge badge-success">Sale</span>
+          } @else {
+            <span class="price--regular">{{ p.price | currency }}</span>
+          }
+        </div>
+
+        <div class="product-detail__rating" aria-label="Rating: {{ p.averageRating }} out of 5">
+          <span class="rating-stars" aria-hidden="true">★</span>
+          <span>{{ p.averageRating | number:'1.1-1' }} ({{ p.numberOfRatings }} reviews)</span>
+        </div>
+
+        <p class="product-detail__description">{{ p.description }}</p>
+
+        @if (sizes.length > 0) {
+          <div class="product-detail__options">
+            <p class="options-label">Size</p>
+            <div class="options-grid" role="group" aria-label="Select size">
+              @for (size of sizes; track size) {
+                <button
+                  class="option-btn"
+                  [class.option-btn--selected]="selectedSize() === size"
+                  [attr.aria-pressed]="selectedSize() === size"
+                  (click)="selectedSize.set(size)"
+                >{{ size }}</button>
+              }
+            </div>
+          </div>
+        }
+
+        @if (colors.length > 0) {
+          <div class="product-detail__options">
+            <p class="options-label">Color</p>
+            <div class="options-grid" role="group" aria-label="Select color">
+              @for (color of colors; track color) {
+                <button
+                  class="option-btn"
+                  [class.option-btn--selected]="selectedColor() === color"
+                  [attr.aria-pressed]="selectedColor() === color"
+                  (click)="selectedColor.set(color)"
+                >{{ color }}</button>
+              }
+            </div>
+          </div>
+        }
+
+        @if (p.stockQuantity === 0) {
+          <p class="out-of-stock" role="status">Out of Stock</p>
+        }
+
+        @if (isAdmin()) {
+          <p class="admin-cart-note" role="note">
+            <span aria-hidden="true">ℹ️</span> Admins cannot add items to cart
+          </p>
+        } @else {
+          @if (cartError()) {
+            <p class="cart-error" role="alert" aria-live="assertive">{{ cartError() }}</p>
+          }
+          @if (cartSuccess()) {
+            <p class="cart-success" role="status" aria-live="polite">✓ Added to cart!</p>
+          }
+          <button
+            class="btn btn-primary product-detail__cta"
+            [disabled]="p.stockQuantity === 0 || addingCart()"
+            [attr.aria-disabled]="p.stockQuantity === 0 || addingCart()"
+            (click)="onAddToCart()"
+          >
+            @if (addingCart()) { Adding... } @else { Add to Cart }
+          </button>
+        }
+
+        <div class="product-detail__meta">
+          <p><strong>SKU:</strong> {{ p.sku }}</p>
+          <p><strong>Category:</strong> {{ p.category }}</p>
+          <p><strong>Gender:</strong> {{ p.gender }}</p>
+        </div>
+      </div>
+    </div>
+  </main>
+}

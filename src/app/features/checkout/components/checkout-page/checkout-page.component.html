@@ -1,0 +1,106 @@
+<main class="checkout-page">
+  <h1 class="checkout-page__title">Checkout</h1>
+
+  @if (loading()) {
+    <app-loading-spinner size="lg" label="Loading payment options..." />
+  } @else if (success()) {
+    <!-- ── Success Banner ─────────────────────────────────────── -->
+    <div class="alert alert--success" role="status" aria-live="polite">
+      <span class="alert__icon">✓</span>
+      Payment successful! Redirecting to your orders…
+    </div>
+
+  } @else {
+    @if (error()) {
+      <div class="alert alert--error" role="alert" aria-live="assertive">{{ error() }}</div>
+    }
+
+    <!-- ── Gateway Selection ──────────────────────────────────── -->
+    <section class="checkout-section" aria-labelledby="payment-heading">
+      <h2 id="payment-heading" class="checkout-section__title">Select Payment Method</h2>
+
+      <div class="gateway-list" role="radiogroup" aria-label="Payment gateways">
+        @for (gateway of gateways(); track gateway.name) {
+          <button
+            id="gateway-{{ gateway.name }}"
+            class="gateway-btn"
+            [class.gateway-btn--selected]="selectedGateway() === gateway.name"
+            [attr.aria-pressed]="selectedGateway() === gateway.name"
+            (click)="selectGateway(gateway)"
+          >
+            <span class="gateway-btn__icon">
+              @if (gateway.name === 'stripe') { 💳 }
+              @if (gateway.name === 'paymob') { 🏦 }
+            </span>
+            {{ gateway.displayName }}
+          </button>
+        }
+      </div>
+
+      <!-- Sub-methods (Paymob: Card vs Wallet) -->
+      @if (currentGateway?.methods && currentGateway!.methods!.length > 0) {
+        <div class="method-list" role="radiogroup" aria-label="Payment sub-methods">
+          @for (method of currentGateway!.methods!; track method.key) {
+            <button
+              id="method-{{ method.key }}"
+              class="method-btn"
+              [class.method-btn--selected]="selectedMethod() === method.key"
+              [attr.aria-pressed]="selectedMethod() === method.key"
+              (click)="selectMethod(method)"
+            >
+              {{ method.displayName }}
+            </button>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- ── Stripe Card Form ───────────────────────────────────── -->
+    @if (isStripe) {
+      <section class="checkout-section stripe-section" aria-labelledby="card-heading">
+        <h2 id="card-heading" class="checkout-section__title">Card Details</h2>
+
+        @if (!stripeConfigured) {
+          <!-- Stripe key not set — show inline notice, NOT the global error banner -->
+          <div class="stripe-notice stripe-notice--warn">
+            ⚠️ Stripe is not configured on this server. Please select <strong>Paymob</strong> instead.
+          </div>
+        } @else {
+          <div
+            #cardElement
+            id="stripe-card-element"
+            class="stripe-card-element"
+            (click)="mountStripeCard()"
+            (mouseenter)="mountStripeCard()"
+          ></div>
+
+          @if (!stripeReady()) {
+            <p class="stripe-hint">Click the field above to enter your card details.</p>
+          }
+
+          @if (stripeError()) {
+            <p class="stripe-error" role="alert">{{ stripeError() }}</p>
+          }
+        }
+
+        <p class="stripe-secure-note">
+          🔒 Your card details are processed securely by Stripe. We never see your card number.
+        </p>
+      </section>
+    }
+
+    <!-- ── Confirm Button ─────────────────────────────────────── -->
+    <button
+      id="confirm-pay-btn"
+      class="btn btn-primary checkout-page__confirm"
+      [disabled]="confirmDisabled"
+      (click)="onConfirm()"
+    >
+      @if (submitting()) {
+        <app-loading-spinner size="sm" label="Processing..." />
+      } @else {
+        Confirm &amp; Pay
+      }
+    </button>
+  }
+</main>
