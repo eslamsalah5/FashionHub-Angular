@@ -180,11 +180,45 @@
           <label class="form-label" for="pf-additional-images">
             Additional Images (optional)
           </label>
-          <label class="file-upload-label" for="pf-additional-images">
+
+          <!-- Show existing additional images (in edit mode) -->
+          @if (isEdit() && existingAdditionalImages().length > 0) {
+            <div class="existing-images-grid">
+              @for (imgUrl of existingAdditionalImages(); track imgUrl) {
+                @if (!additionalImagesToDelete().includes(imgUrl)) {
+                  <div class="image-preview image-preview--small">
+                    <img #img [src]="imgUrl" (error)="img.src = 'https://placehold.co/150x150/e2e8f0/64748b?text=Error'" alt="Additional product image" class="image-preview__img" />
+                    <button type="button" class="image-preview__remove btn btn-danger btn-sm"
+                      (click)="removeExistingAdditionalImage(imgUrl)" aria-label="Remove this image">
+                      ✕
+                    </button>
+                  </div>
+                }
+              }
+            </div>
+          }
+
+          <!-- Show newly selected additional images -->
+          @if (additionalImagePreviews().length > 0) {
+            <div class="existing-images-grid" style="margin-top: 12px;">
+              @for (preview of additionalImagePreviews(); track $index) {
+                <div class="image-preview image-preview--small">
+                  <img [src]="preview" alt="New additional image preview" class="image-preview__img" />
+                  <button type="button" class="image-preview__remove btn btn-danger btn-sm"
+                    (click)="removeNewAdditionalImage($index)" aria-label="Remove this new image">
+                    ✕
+                  </button>
+                  <span class="image-preview__badge">New</span>
+                </div>
+              }
+            </div>
+          }
+
+          <label class="file-upload-label" for="pf-additional-images" style="margin-top: 12px;">
             <span class="file-upload-icon" aria-hidden="true">🖼️</span>
             <span>
               @if (additionalFiles().length > 0) {
-                {{ additionalFiles().length }} file(s) selected
+                {{ additionalFiles().length }} new file(s) selected
               } @else {
                 Choose additional images
               }
@@ -198,13 +232,6 @@
               (change)="onAdditionalImagesChange($event)"
             />
           </label>
-          @if (additionalFiles().length > 0) {
-            <ul class="file-list" aria-label="Selected additional images">
-              @for (file of additionalFiles(); track file.name) {
-                <li class="file-list__item">{{ file.name }}</li>
-              }
-            </ul>
-          }
         </div>
       </section>
 

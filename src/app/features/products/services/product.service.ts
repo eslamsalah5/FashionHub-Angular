@@ -12,6 +12,8 @@ export class ProductService {
   private readonly http    = inject(HttpClient);
   private readonly baseUrl = inject(API_BASE_URL);
 
+  getBaseUrl(): string { return this.baseUrl; }
+
   // ── Normalization ─────────────────────────────────────────────────────
 
   /** Maps numeric enum values returned by the API to TypeScript string enum names,

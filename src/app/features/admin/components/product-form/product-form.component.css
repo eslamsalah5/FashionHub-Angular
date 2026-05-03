@@ -95,6 +95,37 @@
   font-size: var(--font-size-xs);
 }
 
+.image-preview__badge {
+  position: absolute;
+  bottom: var(--space-1);
+  left: var(--space-1);
+  background-color: var(--color-success);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.image-preview--small .image-preview__img {
+  width: 120px;
+  height: 120px;
+}
+
+.existing-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .existing-images-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
 .file-upload-label {
   display: flex;
   align-items: center;

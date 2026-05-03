@@ -27,6 +27,50 @@ export class ProductDetailComponent implements OnInit {
   readonly error    = signal<string | null>(null);
   readonly selectedSize  = signal<string>('');
   readonly selectedColor = signal<string>('');
+  readonly selectedImageIndex = signal(0);
+
+  /** Get all product images (main + additional) */
+  readonly allImages = computed(() => {
+    const p = this.product();
+    if (!p) return [];
+    
+    const images: string[] = [];
+    
+    // Add main image
+    if (p.mainImageUrl) {
+      images.push(p.mainImageUrl);
+    }
+    
+    // Add additional images
+    if (p.additionalImageUrls) {
+      const additionalUrls = p.additionalImageUrls.split(',')
+        .map(url => url.trim())
+        .filter(Boolean)
+        .map(url => this.resolveImageUrl(url));
+      images.push(...additionalUrls);
+    }
+    
+    return images;
+  });
+
+  /** Get the currently selected image */
+  readonly currentImage = computed(() => {
+    const images = this.allImages();
+    const index = this.selectedImageIndex();
+    return images[index] || images[0] || 'https://placehold.co/600x600/e2e8f0/64748b?text=No+Image';
+  });
+
+  private resolveImageUrl(url: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const baseUrl = this.productService.getBaseUrl();
+    const path = url.startsWith('/') ? url : `/${url}`;
+    return `${baseUrl}${path}`;
+  }
+
+  selectImage(index: number): void {
+    this.selectedImageIndex.set(index);
+  }
 
   ngOnInit(): void {
     const idNum = Number(this.id());

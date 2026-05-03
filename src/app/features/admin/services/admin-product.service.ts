@@ -6,13 +6,15 @@ import { PaginatedResult } from '../../../core/models/pagination.model';
 import { Order, UpdateOrderStatusDto } from '../../../core/models/order.model';
 import { API_BASE_URL } from '../../../core/tokens/api-base-url.token';
 
-const PRODUCTS_API = '/api/products';
+export const PRODUCTS_API = '/api/products';
 const ORDERS_API   = '/api/orders';
 
 @Injectable({ providedIn: 'root' })
 export class AdminProductService {
   private readonly http    = inject(HttpClient);
   private readonly baseUrl = inject(API_BASE_URL);
+
+  getBaseUrl(): string { return this.baseUrl; }
 
   // ── Product CRUD ──────────────────────────────────────────────────────
 
@@ -113,5 +115,10 @@ export class AdminProductService {
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     const path = url.startsWith('/') ? url : `/${url}`;
     return `${this.baseUrl}${path}`;
+  }
+
+  /** Public method to resolve image URLs (used by components) */
+  resolveImageUrl(url: string): string {
+    return this.resolveUrl(url);
   }
 }

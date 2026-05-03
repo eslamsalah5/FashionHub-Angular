@@ -9,7 +9,7 @@ import {
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AdminProductService } from '../../services/admin-product.service';
+import { AdminProductService, PRODUCTS_API } from '../../services/admin-product.service';
 import { Product, ProductCategory, Gender } from '../../../../core/models/product.model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -41,6 +41,14 @@ export class ProductFormComponent implements OnInit {
   readonly mainImagePreview = signal<string>('');
   /** Currently selected additional image files */
   readonly additionalFiles = signal<File[]>([]);
+  /** Existing additional image URLs from the server */
+  readonly existingAdditionalImages = signal<string[]>([]);
+  /** Preview URLs for newly selected additional images */
+  readonly additionalImagePreviews = signal<string[]>([]);
+  /** Flag to track if the main image was explicitly removed */
+  readonly mainImageRemoved = signal(false);
+  /** Track which existing additional images should be deleted */
+  readonly additionalImagesToDelete = signal<string[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     name:            ['', [Validators.required]],
@@ -91,6 +99,21 @@ export class ProductFormComponent implements OnInit {
         if (p.mainImageUrl) {
           this.mainImagePreview.set(p.mainImageUrl);
         }
+        // Load existing additional images
+        if (p.additionalImageUrls) {
+          const urls = p.additionalImageUrls.split(',')
+            .map(url => url.trim())
+            .filter(Boolean)
+            .map(url => this.adminService.resolveImageUrl(url));
+          this.existingAdditionalImages.set(urls);
+        }
+        // Reset the removed flag when loading a product
+        this.mainImageRemoved.set(false);
+        this.mainImageFile.set(null);
+        this.additionalFiles.set([]);
+        this.additionalImagePreviews.set([]);
+        this.additionalImagesToDelete.set([]);
+        console.log('📦 Product loaded, mainImageRemoved reset to false');
         this.loadingData.set(false);
       },
       error: () => {
@@ -104,6 +127,8 @@ export class ProductFormComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
     this.mainImageFile.set(file);
+    this.mainImageRemoved.set(false);
+    console.log('📸 New main image selected, mainImageRemoved set to false');
     // Generate local preview
     const reader = new FileReader();
     reader.onload = (e) => this.mainImagePreview.set(e.target?.result as string);
@@ -113,11 +138,43 @@ export class ProductFormComponent implements OnInit {
   onAdditionalImagesChange(event: Event): void {
     const files = Array.from((event.target as HTMLInputElement).files ?? []);
     this.additionalFiles.set(files);
+    
+    // Generate previews for new files
+    const previews: string[] = [];
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previews.push(e.target?.result as string);
+        if (previews.length === files.length) {
+          this.additionalImagePreviews.set(previews);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    if (files.length === 0) {
+      this.additionalImagePreviews.set([]);
+    }
+  }
+
+  removeExistingAdditionalImage(url: string): void {
+    const current = this.additionalImagesToDelete();
+    this.additionalImagesToDelete.set([...current, url]);
+    console.log('🗑️ Marked additional image for deletion:', url);
+  }
+
+  removeNewAdditionalImage(index: number): void {
+    const files = this.additionalFiles();
+    const previews = this.additionalImagePreviews();
+    this.additionalFiles.set(files.filter((_, i) => i !== index));
+    this.additionalImagePreviews.set(previews.filter((_, i) => i !== index));
   }
 
   removeMainImage(): void {
     this.mainImageFile.set(null);
     this.mainImagePreview.set('');
+    this.mainImageRemoved.set(true);
+    console.log('🗑️ Main image removed, mainImageRemoved set to true');
   }
 
   setSizesPreset(preset: string): void {
@@ -154,29 +211,60 @@ export class ProductFormComponent implements OnInit {
     };
 
     // Append all text fields
-    fd.append('name',            v.name);
-    fd.append('description',     v.description);
-    fd.append('price',           String(v.price));
-    fd.append('stockQuantity',   String(v.stockQuantity));
-    fd.append('category',        String(categoryToNum[v.category] ?? 0));
-    fd.append('gender',          String(genderToNum[v.gender] ?? 2));
-    fd.append('brand',           v.brand);
-    fd.append('isOnSale',        String(v.isOnSale));
-    fd.append('isFeatured',      String(v.isFeatured));
-    fd.append('isActive',        String(v.isActive));
-    fd.append('availableSizes',  v.availableSizes);
-    fd.append('availableColors', v.availableColors);
-    fd.append('tags',            v.tags);
+    fd.append('Name',            v.name);
+    fd.append('Description',     v.description);
+    fd.append('Price',           String(v.price));
+    fd.append('StockQuantity',   String(v.stockQuantity));
+    fd.append('Category',        String(categoryToNum[v.category] ?? 0));
+    fd.append('Gender',          String(genderToNum[v.gender] ?? 2));
+    fd.append('Brand',           v.brand);
+    fd.append('IsOnSale',        v.isOnSale ? 'true' : 'false');
+    fd.append('IsFeatured',      v.isFeatured ? 'true' : 'false');
+    fd.append('IsActive',        v.isActive ? 'true' : 'false');
+    fd.append('AvailableSizes',  v.availableSizes);
+    fd.append('AvailableColors', v.availableColors);
+    fd.append('Tags',            v.tags);
+    
+    // Always send ClearMainImage flag (not just when true)
+    fd.append('ClearMainImage', this.mainImageRemoved() ? 'true' : 'false');
+    
     if (v.discountPrice !== null && v.discountPrice !== undefined) {
-      fd.append('discountPrice', String(v.discountPrice));
+      fd.append('DiscountPrice', String(v.discountPrice));
     }
 
     // Append image files
     const mainFile = this.mainImageFile();
     if (mainFile) {
-      fd.append('mainImage', mainFile, mainFile.name);
+      fd.append('MainImage', mainFile, mainFile.name);
+      console.log('📸 New main image attached:', mainFile.name);
     }
-    this.additionalFiles().forEach(f => fd.append('additionalImages', f, f.name));
+    
+    // Append new additional images
+    this.additionalFiles().forEach(f => {
+      fd.append('AdditionalImages', f, f.name);
+      console.log('🖼️ New additional image attached:', f.name);
+    });
+    
+    // Append list of additional images to delete
+    this.additionalImagesToDelete().forEach(url => {
+      fd.append('DeleteAdditionalImages', url);
+      console.log('🗑️ Additional image marked for deletion:', url);
+    });
+
+    // Debug: Log FormData contents
+    console.log('📤 Submitting product update to:', `${this.adminService.getBaseUrl()}${PRODUCTS_API}/${this.id()}`);
+    console.log('  - ClearMainImage:', this.mainImageRemoved() ? 'true' : 'false');
+    console.log('  - MainImageFile:', mainFile?.name || 'none');
+    
+    // Log all FormData entries
+    console.log('📋 FormData entries:');
+    fd.forEach((value, key) => {
+      if (value instanceof File) {
+        console.log(`  ${key}: [File] ${value.name}`);
+      } else {
+        console.log(`  ${key}: ${value}`);
+      }
+    });
 
     const req$: Observable<unknown> = this.isEdit()
       ? this.adminService.updateProduct(Number(this.id()), fd)
