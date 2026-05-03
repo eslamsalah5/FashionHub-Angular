@@ -11,6 +11,47 @@
       </div>
     }
 
+    <!-- Quick Access Demo Accounts -->
+    @if (showQuickAccess) {
+      <div class="quick-access">
+        <div class="quick-access__header">
+          <span class="quick-access__icon">⚡</span>
+          <h3 class="quick-access__title">Quick Access - Demo Accounts</h3>
+        </div>
+        <p class="quick-access__subtitle">For HR presentation and testing purposes</p>
+        <div class="quick-access__buttons">
+          <button 
+            type="button" 
+            class="btn btn-demo btn-demo--admin" 
+            (click)="quickLogin('admin')"
+            [disabled]="loading()"
+          >
+            <span class="btn-demo__icon">👨‍💼</span>
+            <span class="btn-demo__content">
+              <span class="btn-demo__label">Admin Account</span>
+              <span class="btn-demo__hint">Full dashboard access</span>
+            </span>
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-demo btn-demo--customer" 
+            (click)="quickLogin('customer')"
+            [disabled]="loading()"
+          >
+            <span class="btn-demo__icon">🛍️</span>
+            <span class="btn-demo__content">
+              <span class="btn-demo__label">Customer Account</span>
+              <span class="btn-demo__hint">Shopping experience</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="divider">
+        <span class="divider__text">Or sign in with your account</span>
+      </div>
+    }
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-group">
         <label class="form-label" for="identifier">Email or Username</label>

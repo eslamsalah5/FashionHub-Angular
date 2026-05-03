@@ -76,6 +76,15 @@
   position: relative;
   display: inline-block;
   margin-bottom: var(--space-3);
+  transition: transform var(--transition-fast);
+}
+
+.image-preview:hover {
+  transform: translateY(-2px);
+}
+
+.image-preview:hover .image-preview__remove {
+  opacity: 1;
 }
 
 .image-preview__img {
@@ -93,6 +102,17 @@
   right: var(--space-1);
   padding: var(--space-1) var(--space-2);
   font-size: var(--font-size-xs);
+  min-width: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  opacity: 0.9;
+  transition: all var(--transition-fast);
+}
+
+.image-preview__remove:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  opacity: 1;
 }
 
 .image-preview__badge {

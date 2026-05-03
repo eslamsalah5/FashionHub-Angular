@@ -188,9 +188,11 @@
                 @if (!additionalImagesToDelete().includes(imgUrl)) {
                   <div class="image-preview image-preview--small">
                     <img #img [src]="imgUrl" (error)="img.src = 'https://placehold.co/150x150/e2e8f0/64748b?text=Error'" alt="Additional product image" class="image-preview__img" />
-                    <button type="button" class="image-preview__remove btn btn-danger btn-sm"
-                      (click)="removeExistingAdditionalImage(imgUrl)" aria-label="Remove this image">
-                      ✕
+                    <button type="button" class="image-preview__remove btn btn-danger"
+                      (click)="removeExistingAdditionalImage(imgUrl)" 
+                      aria-label="Remove this image"
+                      title="Remove this image">
+                      ✕ Remove
                     </button>
                   </div>
                 }
@@ -204,9 +206,11 @@
               @for (preview of additionalImagePreviews(); track $index) {
                 <div class="image-preview image-preview--small">
                   <img [src]="preview" alt="New additional image preview" class="image-preview__img" />
-                  <button type="button" class="image-preview__remove btn btn-danger btn-sm"
-                    (click)="removeNewAdditionalImage($index)" aria-label="Remove this new image">
-                    ✕
+                  <button type="button" class="image-preview__remove btn btn-danger"
+                    (click)="removeNewAdditionalImage($index)" 
+                    aria-label="Remove this new image"
+                    title="Remove this new image">
+                    ✕ Remove
                   </button>
                   <span class="image-preview__badge">New</span>
                 </div>

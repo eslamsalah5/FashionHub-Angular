@@ -43,6 +43,8 @@ export class ProductFormComponent implements OnInit {
   readonly additionalFiles = signal<File[]>([]);
   /** Existing additional image URLs from the server */
   readonly existingAdditionalImages = signal<string[]>([]);
+  /** Original relative paths for existing additional images (for deletion) */
+  readonly existingAdditionalImagePaths = signal<string[]>([]);
   /** Preview URLs for newly selected additional images */
   readonly additionalImagePreviews = signal<string[]>([]);
   /** Flag to track if the main image was explicitly removed */
@@ -101,10 +103,15 @@ export class ProductFormComponent implements OnInit {
         }
         // Load existing additional images
         if (p.additionalImageUrls) {
-          const urls = p.additionalImageUrls.split(',')
+          const paths = p.additionalImageUrls.split(',')
             .map(url => url.trim())
-            .filter(Boolean)
-            .map(url => this.adminService.resolveImageUrl(url));
+            .filter(Boolean);
+          
+          // Store original paths for deletion
+          this.existingAdditionalImagePaths.set(paths);
+          
+          // Store resolved URLs for display
+          const urls = paths.map(url => this.adminService.resolveImageUrl(url));
           this.existingAdditionalImages.set(urls);
         }
         // Reset the removed flag when loading a product
@@ -113,6 +120,7 @@ export class ProductFormComponent implements OnInit {
         this.additionalFiles.set([]);
         this.additionalImagePreviews.set([]);
         this.additionalImagesToDelete.set([]);
+        this.existingAdditionalImagePaths.set([]);
         console.log('📦 Product loaded, mainImageRemoved reset to false');
         this.loadingData.set(false);
       },
@@ -158,9 +166,14 @@ export class ProductFormComponent implements OnInit {
   }
 
   removeExistingAdditionalImage(url: string): void {
-    const current = this.additionalImagesToDelete();
-    this.additionalImagesToDelete.set([...current, url]);
-    console.log('🗑️ Marked additional image for deletion:', url);
+    // Find the index of the URL to get the corresponding path
+    const index = this.existingAdditionalImages().indexOf(url);
+    if (index !== -1) {
+      const path = this.existingAdditionalImagePaths()[index];
+      const current = this.additionalImagesToDelete();
+      this.additionalImagesToDelete.set([...current, path]);
+      console.log('🗑️ Marked additional image for deletion:', path);
+    }
   }
 
   removeNewAdditionalImage(index: number): void {
