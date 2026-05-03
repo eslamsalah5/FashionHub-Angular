@@ -8,6 +8,7 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { baseUrlInterceptor } from './core/interceptors/base-url.interceptor';
 import { API_BASE_URL } from './core/tokens/api-base-url.token';
 import { STRIPE_PUBLISHABLE_KEY } from './core/tokens/stripe.token';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,19 +17,18 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withFetch(),
       // Order matters: baseUrl runs first so auth interceptor sees the full URL
-      withInterceptors([baseUrlInterceptor, authInterceptor, errorInterceptor])
+      withInterceptors([baseUrlInterceptor, authInterceptor, errorInterceptor]),
     ),
     provideClientHydration(withEventReplay()),
     {
       provide: API_BASE_URL,
-      // User is testing against the production deployment
-      useValue: 'https://fashionhub.runasp.net',
+      useValue: environment.apiBaseUrl,
     },
     {
       // Stripe Publishable Key
-      // MUST match the Secret Key used in the backend!
+      // MUST match the Secret Key used in the backend.
       provide: STRIPE_PUBLISHABLE_KEY,
-      useValue: 'pk_test_51PoyQxDfmNuhtiwAYPxPz8jfnnK62wXX7XVaRLFV7iOiXz3cd9jCcZGU8RtOkV06lE1hwImoXWjB3wQjU18k96ce00ATbgmVOM', // ← ضع الـ Publishable Key الخاص بك هنا (pk_test_...)
+      useValue: environment.stripePublishableKey,
     },
   ],
 };
