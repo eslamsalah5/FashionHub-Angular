@@ -3,10 +3,10 @@
 FashionHub is a modern, fully responsive e-commerce web application built with **Angular 21**. It delivers a complete online shopping experience — product browsing, cart management, secure Stripe checkout, order tracking, user profiles, and a full Admin Dashboard.
 
 ![Angular](https://img.shields.io/badge/Angular-21.2-red?style=flat-square&logo=angular)
-![SSR](https://img.shields.io/badge/SSR-Enabled-success?style=flat-square)
 ![Stripe](https://img.shields.io/badge/Stripe-Integrated-blue?style=flat-square&logo=stripe)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=flat-square&logo=typescript)
 ![Vitest](https://img.shields.io/badge/Testing-Vitest-yellow?style=flat-square&logo=vitest)
+
 
 ---
 
@@ -204,13 +204,6 @@ npm run build
 
 Output is written to `../FashionHubApi/Presentation/wwwroot` — ready to be served by the .NET backend.
 
-### SSR Preview
-
-```bash
-npm run build
-npm run serve:ssr:FashionHubAngular
-```
-
 ---
 
 ## 📦 Tech Stack
@@ -219,7 +212,7 @@ npm run serve:ssr:FashionHubAngular
 |---|---|
 | Framework | Angular 21.2 (Standalone Components, Signals) |
 | Language | TypeScript 5.9 (strict mode) |
-| Rendering | SSR via `@angular/ssr` + Express 5 |
+| Rendering | Client-Side Rendering (CSR) SPA |
 | Payments | `@stripe/stripe-js` 9.4 |
 | HTTP | Angular `HttpClient` with `withFetch()` |
 | Reactivity | Angular Signals + RxJS 7.8 |
@@ -262,9 +255,7 @@ FashionHubAngular/
 │   │   ├── environment.ts            # Development config
 │   │   └── environment.prod.ts       # Production config
 │   ├── styles.css                    # Global styles
-│   ├── main.ts                       # Browser bootstrap
-│   ├── main.server.ts                # SSR bootstrap
-│   └── server.ts                     # Express SSR server
+│   └── main.ts                       # Browser bootstrap
 ├── public/
 │   └── favicon.ico
 ├── angular.json                      # Angular CLI config

@@ -26,7 +26,9 @@ export class AdminProductListComponent {
   readonly deleteMode   = signal<DeleteMode>(null);
   readonly pageSize     = 10;
 
-  constructor() { this.loadPage(0); }
+  constructor() {
+    this.loadPage(0);
+  }
 
   loadPage(pageIndex: number): void {
     this.loading.set(true);

@@ -170,3 +170,28 @@
   .site-nav { display: none; }
   .site-header__actions { gap: var(--space-2); }
 }
+
+/* ── Route-loading skeleton ──
+   Shown inside <main> while Angular router resolves a lazy-loaded route.
+   Layout mirrors the product-list page so the transition is seamless. */
+.route-skeleton {
+  padding: var(--space-8) var(--space-4);
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+.route-skeleton__title {
+  height: 36px;
+  width: 200px;
+  margin-bottom: var(--space-6);
+}
+
+.route-skeleton__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-6);
+}
+
+.route-skeleton__card {
+  height: 380px;
+}

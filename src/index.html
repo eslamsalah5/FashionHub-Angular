@@ -2,12 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>FashionHubAngular</title>
+  <title>FashionHub — Premium Fashion Store</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FashionHub — discover premium clothing, accessories, and footwear.">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Pre-bootstrap loading styles (inline to avoid FOUC) -->
+  <style>
+    .app-shell{font-family:'Inter',system-ui,-apple-system,sans-serif;color:#111827}
+    .app-shell__header{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid #e5e7eb;box-shadow:0 1px 2px 0 rgb(0 0 0/.05);height:4rem;display:flex;align-items:center;padding:0 1rem}
+    .app-shell__logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;font-size:1.25rem;font-weight:700;color:#15803d}
+    .app-shell__main{max-width:1280px;margin:0 auto;padding:2rem 1rem}
+    .app-shell__title{height:36px;width:200px;border-radius:.5rem;margin-bottom:1.5rem}
+    .app-shell__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
+    .app-shell__card{height:380px;border-radius:.5rem}
+    .app-shell__sk{background:linear-gradient(90deg,rgba(209,213,219,.2) 25%,rgba(209,213,219,.5) 50%,rgba(209,213,219,.2) 75%);background-size:200% 100%;animation:sk 1.5s ease-in-out infinite}
+    @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  </style>
 </head>
 <body>
-  <app-root></app-root>
+  <!--
+    Pre-bootstrap shell: Angular replaces <app-root> contents when it boots.
+    This gives instant visual feedback while JS downloads and parses.
+  -->
+  <app-root>
+    <div class="app-shell">
+      <div class="app-shell__header">
+        <span class="app-shell__logo">👗 FashionHub</span>
+      </div>
+      <div class="app-shell__main">
+        <div class="app-shell__title app-shell__sk"></div>
+        <div class="app-shell__grid">
+          <div class="app-shell__card app-shell__sk"></div>
+          <div class="app-shell__card app-shell__sk"></div>
+          <div class="app-shell__card app-shell__sk"></div>
+          <div class="app-shell__card app-shell__sk"></div>
+        </div>
+      </div>
+    </div>
+  </app-root>
 </body>
 </html>

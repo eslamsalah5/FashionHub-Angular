@@ -55,7 +55,9 @@ export class ProductSaleComponent {
 
   get showCart(): boolean { return this.auth.userRole() === 'Customer'; }
 
-  constructor() { this.loadPage(0); }
+  constructor() {
+    this.loadPage(0);
+  }
 
   loadPage(pageIndex: number): void {
     this.loading.set(true);
